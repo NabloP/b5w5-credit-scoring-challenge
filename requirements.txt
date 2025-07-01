@@ -1,0 +1,60 @@
+# -------------------------
+# ENVIRONMENT MANAGEMENT
+# -------------------------
+python-dotenv
+
+# -------------------------
+# CORE DATA LIBRARIES
+# -------------------------
+pandas
+numpy
+scikit-learn
+
+# -------------------------
+# DATA PIPELINING & MODELING
+# -------------------------
+xgboost
+lightgbm
+imbalanced-learn
+
+# -------------------------
+# FEATURE ENGINEERING
+# -------------------------
+xverse
+woe
+
+# -------------------------
+# MODEL TRACKING & MLOps
+# -------------------------
+mlflow
+joblib
+
+# -------------------------
+# API DEPLOYMENT
+# -------------------------
+fastapi
+uvicorn
+
+# -------------------------
+# VISUALIZATION
+# -------------------------
+matplotlib
+seaborn
+plotly
+
+# -------------------------
+# TESTING & LINTING
+# -------------------------
+pytest
+flake8
+black
+
+# -------------------------
+# INTERACTIVE ANALYSIS
+# -------------------------
+jupyterlab
+
+# -------------------------
+# VERSION CONTROL (OPTIONAL)
+# -------------------------
+dvc

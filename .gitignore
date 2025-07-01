@@ -1,0 +1,81 @@
+# 🐍 Python cache
+__pycache__/
+*.py[cod]
+
+# 📓 Jupyter Notebook
+*.ipynb_checkpoints/
+
+# 🧪 Virtual environments
+.venv/
+venv/
+.env/
+credit-scoring-challenge/
+
+# 💾 Data & output
+data/
+models/
+*.xlsx
+*.log
+*.feather
+*.parquet
+
+# Ignore auto-generated reports and analysis summaries
+reports/
+*.pdf
+*.docx
+
+# 📈 Financial model exports
+outputs/
+plots/
+dashboards/
+
+# 📜 README tree tracking (auto-generated)
+project-tree.txt
+
+# 💻 IDE & OS settings
+.vscode/
+.DS_Store
+
+# Serialized models
+*.pkl
+*.joblib
+
+# -----------------------------
+# 🌱 DVC-specific Ignore Rules
+# -----------------------------
+
+# Allow DVC control directory (required!)
+!.dvc/
+
+# Ignore DVC cache (can be huge!)
+/.dvc/cache/
+
+# Ignore any hidden DVC logs or temp files
+*.dvc.tmp
+*.dvc.lock
+
+# -----------------------------
+# 🧱 Data Directories
+# -----------------------------
+
+# Ignore actual data files (handled by .dvc tracking)
+data/raw/
+data/cleaned/
+data/enriched/
+
+# Let DVC track pointer files
+!data/**/*.dvc
+
+# -----------------------------
+# 🛠️ IDE + Python Misc
+# -----------------------------
+
+__pycache__/
+*.pyc
+*.pyo
+*.log
+*.ipynb_checkpoints/
+
+# VSCode etc.
+.vscode/
+.env
