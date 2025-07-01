@@ -105,19 +105,28 @@ solar-challenge-week1/
 ├── docker-compose.yml
 ├── requirements.txt
 ├── .github/
+│   ├── README.md
 │   └── workflows/
 │       ├── ci.yml
 ├── data/
+│   ├── README.md
 │   ├── processed/
 │   └── raw/
 │       ├── Xente_Variable_Definitions.csv
 │       ├── data.csv
 ├── notebooks/
+│   ├── README.md
 │   ├── task-2-eda.ipynb
+│   ├── task-3-proxy-labeling.ipynb
+│   ├── task-4-model-training.ipynb
+│   ├── task-5-api-deployement.ipynb
+│   ├── task-6-experiment-tracking.ipynb
 ├── scripts/
+│   ├── README.md
 │   ├── eda_runner.py
 │   ├── generate_tree.py
 ├── src/
+│   ├── README.md
 │   ├── __init__.py
 │   ├── data_loader.py
 │   ├── data_processing.py
@@ -126,13 +135,18 @@ solar-challenge-week1/
 │   ├── api/
 │   │   ├── main.py
 │   │   ├── pydantic_models.py
-│   └── eda/
-│       ├── customer_behavior_analyzer.py
-│       ├── distribution_analyzer.py
-│       ├── fraud_segment_analyzer.py
-│       ├── schema_auditor.py
-│       ├── temporal_behavior_analyzer.py
+│   ├── clustering/
+│   ├── deployment/
+│   ├── eda/
+│   │   ├── customer_behavior_analyzer.py
+│   │   ├── distribution_analyzer.py
+│   │   ├── fraud_segment_analyzer.py
+│   │   ├── schema_auditor.py
+│   │   ├── temporal_behavior_analyzer.py
+│   ├── features/
+│   └── modeling/
 └── tests/
+    ├── README.md
     ├── test_data_processing.py
 <!-- TREE END -->
 
@@ -155,6 +169,21 @@ solar-challenge-week1/
 | 4      | Feature Engineering & Preparation  | ⏳ Not Started  | Construct final modeling dataset |
 | 5      | Model Training & Evaluation        | ⏳ Not Started  | Train and interpret models (LogReg, XGB) |
 | 6      | Deployment & Reporting             | ⏳ Not Started  | FastAPI deployment and final rubric polish |
+
+---
+
+
+## 📌 Task-to-Component Roadmap
+
+| Task       | Description                                                   | Key Files/Modules                                  |
+|------------|---------------------------------------------------------------|----------------------------------------------------|
+| **Task 1** | Business Understanding, Basel II framing, and proxy rationale | `README.md`, `task-1-business-understanding.ipynb` |
+| **Task 2** | Exploratory Data Analysis and RFM profiling                   | `task-2-eda.ipynb`, `src/eda/customer_behavior_analyzer.py`, `fraud_segment_analyzer.py`, `distribution_analyzer.py`, `temporal_behavior_analyzer.py`, `defensive_schema_auditor.py`         |
+| **Task 3** | Feature Engineering with sklearn pipeline                     | `task-3-feature-engineering.ipynb`, `src/features/feature_pipeline_builder.py` (planned)                                                                                            |
+| **Task 4** | Proxy Target Creation with RFM + KMeans clustering            | `src/clustering/kmeans_labeler.py`, `src/clustering/cluster_diagnostics.py` (planned)                                                                                                 |
+| **Task 5** | Model Training, Validation, MLflow tracking                   | `src/modeling/model_trainer.py`, `model_evaluator.py`, `task-5-modeling.ipynb` (planned)                                                                                                  |
+| **Task 6** | Deployment, CI/CD, Docker, API                                | `src/api/fastapi_app.py` (planned), `Dockerfile`, `.github/workflows/ci.yml`, `tests/unit/`                                                                                                  |
+
 
 ---
 
