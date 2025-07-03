@@ -1,25 +1,30 @@
 """
-schema_auditor.py – Schema Auditor for Credit Risk Dataset (B5W5)
+schema_auditor.py – DataFrame Schema Diagnostic Tool (B5W5)
 ------------------------------------------------------------------------------
-Performs structural audits of the transaction dataset to assess data quality,
-missingness, column behavior, and data type conformity.
+Provides detailed structural diagnostics on credit risk transactional DataFrames.
+Summarizes missingness, uniqueness, type stability, and schema integrity.
 
 Core responsibilities:
-  • Detects missing values across all columns
-  • Identifies constant or near-constant columns
-  • Inspects data types for potential type coercion
-  • Flags high-cardinality variables that may impair modeling
-  • Outputs diagnostics to guide cleaning and preprocessing
+  • Computes per-column metrics: dtype, n_unique, % missing, constant-value flags
+  • Flags high-null fields with severity bands for risk assessment
+  • Checks for duplicate identifier values to ensure record uniqueness
+  • Supports styled schema summaries for EDA and documentation
+  • Raises clear, actionable exceptions for invalid inputs
 
-Used in Task 2 EDA, feature engineering design, and model guardrails.
+Used in Task 2 EDA, feature engineering audits, and modeling guardrails.
 
 Author: Nabil Mohamed
 """
 
 # ───────────────────────────────────────────────────────────────────────────────
+# 📦 Standard Library Imports
+# ───────────────────────────────────────────────────────────────────────────────
+from typing import List
+
+# ───────────────────────────────────────────────────────────────────────────────
 # 📦 Third-Party Imports
 # ───────────────────────────────────────────────────────────────────────────────
-import pandas as pd  # Core data handling
+import pandas as pd
 
 
 # ───────────────────────────────────────────────────────────────────────────────
@@ -27,70 +32,130 @@ import pandas as pd  # Core data handling
 # ───────────────────────────────────────────────────────────────────────────────
 class SchemaAuditor:
     """
-    Audits schema-level characteristics of a transaction dataset,
-    providing diagnostics on data completeness, structure, and quality.
+    Class for performing schema-level structural diagnostics on credit risk datasets.
+    Provides missingness, uniqueness, type, and stability checks.
     """
 
     def __init__(self, df: pd.DataFrame):
         """
-        Initialize with a pandas DataFrame to be audited.
+        Initialize the schema auditor with the provided DataFrame.
 
         Args:
-            df (pd.DataFrame): The transaction data.
+            df (pd.DataFrame): Transaction-level dataset for BNPL credit risk modeling.
 
         Raises:
-            TypeError: If input is not a DataFrame.
+            TypeError: If input is not a pandas DataFrame.
+            ValueError: If the DataFrame is empty or has no columns.
         """
-        # 🛡️ Validate input type for robustness
         if not isinstance(df, pd.DataFrame):
-            raise TypeError("SchemaAuditor requires a pandas DataFrame as input.")
-        self.df = df.copy()  # Work on a copy to avoid mutation
+            raise TypeError(f"Input must be a pandas DataFrame, received {type(df)}.")
 
-    def report(self) -> dict:
+        if df.empty or df.shape[1] == 0:
+            raise ValueError("Input DataFrame is empty or contains no columns.")
+
+        self.df = df.copy()  # Use defensive copying
+        self.schema_df = None  # Stores the generated schema summary
+
+    def summarize_schema(self) -> pd.DataFrame:
         """
-        Computes a schema audit report with key diagnostics.
+        Computes and stores per-column schema metrics.
 
         Returns:
-            dict: A dictionary containing:
-                - Dataset shape
-                - Null counts per column
-                - Data types per column
-                - Constant columns (same value throughout)
-                - High-cardinality columns (90%+ unique values)
+            pd.DataFrame: DataFrame summarizing schema characteristics.
+        """
+        try:
+            schema = pd.DataFrame(
+                {
+                    "dtype": self.df.dtypes.astype(str),
+                    "n_unique": self.df.nunique(dropna=False),
+                    "n_missing": self.df.isna().sum(),
+                }
+            )
+
+            schema["%_missing"] = (schema["n_missing"] / len(self.df) * 100).round(2)
+            schema["is_constant"] = schema["n_unique"] <= 1
+            schema["high_null_flag"] = pd.cut(
+                schema["%_missing"],
+                bins=[-1, 0, 20, 50, 100],
+                labels=["✅ OK", "🟡 Moderate", "🟠 High", "🔴 Critical"],
+            )
+
+            self.schema_df = schema.sort_values("%_missing", ascending=False)
+            return self.schema_df
+
+        except Exception as e:
+            raise RuntimeError(f"Error generating schema summary: {e}")
+
+    def styled_summary(self):
+        """
+        Creates a visually enhanced schema summary for Jupyter display.
+
+        Returns:
+            pd.io.formats.style.Styler: Styled DataFrame with color cues.
+        """
+        try:
+            if self.schema_df is None:
+                self.summarize_schema()
+
+            styled = (
+                self.schema_df.style.background_gradient(
+                    subset="%_missing", cmap="OrRd"
+                )
+                .applymap(
+                    lambda val: (
+                        "background-color: gold; font-weight: bold;" if val else ""
+                    ),
+                    subset=["is_constant"],
+                )
+                .format({"%_missing": "{:.2f}"})
+            )
+            return styled
+
+        except Exception as e:
+            raise RuntimeError(f"Error styling schema summary: {e}")
+
+    def print_diagnostics(self) -> None:
+        """
+        Prints a concise summary of schema health including missingness and stability flags.
 
         Raises:
-            ValueError: If DataFrame is empty or has no columns.
+            RuntimeError: If diagnostics cannot be generated.
         """
-        # 🛡️ Defensive check for empty data
-        if self.df.empty or self.df.shape[1] == 0:
-            raise ValueError("Provided DataFrame is empty or lacks columns.")
+        try:
+            if self.schema_df is None:
+                self.summarize_schema()
 
-        # 📦 Initialize report container
-        report = {}
+            n_const = self.schema_df["is_constant"].sum()
+            n_null_20 = (self.schema_df["%_missing"] > 20).sum()
+            n_null_50 = (self.schema_df["%_missing"] > 50).sum()
 
-        # 📐 Record basic shape of the dataset
-        report["shape"] = self.df.shape
+            print("\n📝 Schema Diagnostics:")
+            print(f"• Constant-value columns:    {n_const}")
+            print(f"• Columns >20% missing:      {n_null_20}")
+            print(f"• Columns >50% missing:      {n_null_50}")
 
-        # 🧱 Compute null counts per column
-        report["null_counts"] = self.df.isnull().sum().to_dict()
+        except Exception as e:
+            raise RuntimeError(f"Error printing diagnostics: {e}")
 
-        # 🔍 Extract raw data types for each column
-        report["dtypes"] = self.df.dtypes.astype(str).to_dict()
+    def check_duplicate_ids(self, id_columns: List[str]) -> None:
+        """
+        Checks for duplicates in key identifier columns.
 
-        # 🧊 Identify constant columns (no variance)
-        report["constant_columns"] = [
-            col for col in self.df.columns if self.df[col].nunique(dropna=False) == 1
-        ]
+        Args:
+            id_columns (List[str]): List of identifier columns to check.
 
-        # 🔢 Identify columns with very high cardinality
-        cardinality_threshold = 0.9 * self.df.shape[0]  # e.g. 90%+ unique
-        report["high_cardinality"] = [
-            col
-            for col in self.df.columns
-            if self.df[col].nunique() >= cardinality_threshold
-        ]
+        Raises:
+            ValueError: If any specified column does not exist in the DataFrame.
+        """
+        try:
+            for col in id_columns:
+                if col not in self.df.columns:
+                    raise ValueError(f"Identifier column '{col}' not found.")
 
-        # ✅ Output audit complete message
-        print(f"✅ Schema audit complete: {self.df.shape[1]} columns analyzed.")
-
-        return report
+                n_duplicates = self.df[col].duplicated().sum()
+                print(
+                    f"• {col}: {n_duplicates:,} duplicates"
+                    + (" ⚠️ Potential integrity risk." if n_duplicates > 0 else "")
+                )
+        except Exception as e:
+            raise RuntimeError(f"Error checking duplicate IDs: {e}")
