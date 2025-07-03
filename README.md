@@ -159,16 +159,52 @@ solar-challenge-week1/
 
 ---
 
-## 📋 Task Progress Tracker
+---
 
-| Task # | Task Name                          | Status         | Description |
-|--------|------------------------------------|----------------|-------------|
-| 1      | Project Setup & Repo Structuring   | ✅ Complete     | Folder structure, env, and loader established |
-| 2      | Exploratory Data Analysis (EDA)    | ✅ Complete     | EDA CLI modules and behavioral diagnostics done |
-| 3      | Proxy Target Engineering           | 🟡 In Progress  | Designing proxy labels using RFM & fraud segments |
-| 4      | Feature Engineering & Preparation  | ⏳ Not Started  | Construct final modeling dataset |
-| 5      | Model Training & Evaluation        | ⏳ Not Started  | Train and interpret models (LogReg, XGB) |
-| 6      | Deployment & Reporting             | ⏳ Not Started  | FastAPI deployment and final rubric polish |
+## 📋 Task Progress Tracker (Granular Updates for Tasks 2-6)
+
+| Task # | Task Name                           | Status        | Detailed Description |
+|--------|-------------------------------------|---------------|----------------------|
+| 2      | Exploratory Data Analysis (EDA)     | ✅ Completed   | Executed full schema audit, null analysis, distribution visualizations (categorical, numerical, temporal behavior). Modules: `customer_behavior_analyzer.py`, `distribution_analyzer.py`, `temporal_behavior_analyzer.py`, `schema_auditor.py`. |
+| 3      | Proxy Target Engineering            | ✅ Completed   | Developed proxy labels using behavioral heuristics and RFM clustering. Modules: `kmeans_labeler.py`, `cluster_diagnostics.py`. |
+| 4      | Feature Engineering & Preparation   | ✅ Completed   | Engineered aggregate and temporal behavioral features; handled missing values, encoding, scaling via sklearn pipeline. Modules: `data_processing.py`, `feature_pipeline_builder.py`. |
+| 5      | Model Training & Evaluation         | ✅ Completed   | Trained Logistic Regression and Random Forest models; performed hyperparameter tuning; evaluated using Accuracy, Precision, Recall, F1, ROC-AUC; SHAP analysis for interpretability. Modules: `train.py`, `model_evaluator.py`, `experiment_tracker.py`. |
+| 6      | Deployment & CI/CD                  | ✅ Completed   | Built a FastAPI API with prediction endpoint (`/predict`); containerized using Docker and docker-compose; configured GitHub Actions for linting and testing. Modules: `main.py`, `pydantic_models.py`, `Dockerfile`, `docker-compose.yml`, `.github/workflows/ci.yml`. |
+
+---
+
+## 🚀 API Usage Instructions
+
+### 1. Build and Run the API Locally
+
+```bash
+docker-compose up --build
+```
+
+### 2. Predict Endpoint Usage
+
+Send a POST request to the `/predict` endpoint with the following JSON structure:
+
+```bash
+curl -X POST "http://localhost:8000/predict" \
+-H "Content-Type: application/json" \
+-d '{"features": [0.0, 1.0, 2.5, 100.0, 0.0, 0.1, 1, 0, 10, 5, 200, 1, 5, 1000, 200, 50, 10, 1, 2, 3, 1, 0, 1]}'
+```
+
+### 3. Example Response
+
+```json
+{
+  "risk_probability": 0.72
+}
+```
+
+---
+
+## ⚙️ CI/CD Pipeline
+
+- CI/CD configured through GitHub Actions at `.github/workflows/ci.yml`
+- Runs automated flake8 linting and pytest unit tests on every push
 
 ---
 
@@ -184,18 +220,6 @@ solar-challenge-week1/
 | **Task 5** | Model Training, Validation, MLflow tracking                   | `src/modeling/model_trainer.py`, `model_evaluator.py`, `task-5-modeling.ipynb` (planned)                                                                                                  |
 | **Task 6** | Deployment, CI/CD, Docker, API                                | `src/api/fastapi_app.py` (planned), `Dockerfile`, `.github/workflows/ci.yml`, `tests/unit/`                                                                                                  |
 
-
----
-
-## 📦 Key Capabilities (Planned)
-
-- 🧠 Proxy label engineering using RFM + KMeans clustering
-- 🧪 Modeling with both Logistic Regression and XGBoost
-- 📉 Risk scoring and loan sizing predictions
-- 📦 FastAPI model deployment with CI/CD and Docker
-- 🔁 MLflow experiment tracking and registry
-
----
 
 ## 📌 References
 
