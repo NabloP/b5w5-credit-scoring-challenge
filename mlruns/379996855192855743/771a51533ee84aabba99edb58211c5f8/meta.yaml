@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/admin/Documents/GIT%20Repositories/b5w5-credit-scoring-challenge/mlruns/379996855192855743/771a51533ee84aabba99edb58211c5f8/artifacts
+end_time: 1751570254457
+entry_point_name: ''
+experiment_id: '379996855192855743'
+lifecycle_stage: active
+run_id: 771a51533ee84aabba99edb58211c5f8
+run_name: glamorous-hound-820
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751570239707
+status: 3
+tags: []
+user_id: admin

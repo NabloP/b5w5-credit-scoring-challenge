@@ -22,6 +22,7 @@ imbalanced-learn
 # -------------------------
 xverse
 woe
+shap
 
 # -------------------------
 # MODEL TRACKING & MLOps

@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/admin/Documents/GIT%20Repositories/b5w5-credit-scoring-challenge/mlruns/379996855192855743/3c762d5fe649419fbe3564e9288995da/artifacts
+end_time: 1751569230708
+entry_point_name: ''
+experiment_id: '379996855192855743'
+lifecycle_stage: active
+run_id: 3c762d5fe649419fbe3564e9288995da
+run_name: melodic-vole-951
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751569213108
+status: 3
+tags: []
+user_id: admin

@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/admin/Documents/GIT%20Repositories/b5w5-credit-scoring-challenge/mlruns/379996855192855743/9b4ccce7aa9c4273a35121d6bb9c45ab/artifacts
+end_time: 1751569822189
+entry_point_name: ''
+experiment_id: '379996855192855743'
+lifecycle_stage: active
+run_id: 9b4ccce7aa9c4273a35121d6bb9c45ab
+run_name: classy-robin-593
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751569807860
+status: 3
+tags: []
+user_id: admin

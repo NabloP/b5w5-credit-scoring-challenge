@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/admin/Documents/GIT%20Repositories/b5w5-credit-scoring-challenge/mlruns/379996855192855743/5602febdbbb64fc9a1d089a3f9eb7279/artifacts
+end_time: 1751569836037
+entry_point_name: ''
+experiment_id: '379996855192855743'
+lifecycle_stage: active
+run_id: 5602febdbbb64fc9a1d089a3f9eb7279
+run_name: righteous-crane-53
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751569822233
+status: 3
+tags: []
+user_id: admin

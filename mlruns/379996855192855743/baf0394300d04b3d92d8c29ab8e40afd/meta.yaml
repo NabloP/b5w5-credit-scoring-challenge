@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/admin/Documents/GIT%20Repositories/b5w5-credit-scoring-challenge/mlruns/379996855192855743/baf0394300d04b3d92d8c29ab8e40afd/artifacts
+end_time: 1751569213071
+entry_point_name: ''
+experiment_id: '379996855192855743'
+lifecycle_stage: active
+run_id: baf0394300d04b3d92d8c29ab8e40afd
+run_name: enthused-stag-364
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751569173020
+status: 3
+tags: []
+user_id: admin
