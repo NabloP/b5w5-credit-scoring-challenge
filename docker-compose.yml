@@ -1,0 +1,15 @@
+# ------------------------------------------------------------------------------
+# docker-compose.yml – BNPL Credit Risk Scoring API Deployment (B5W5)
+# ------------------------------------------------------------------------------
+
+version: "3.8"
+
+services:
+  credit-risk-api:
+    build: .
+    container_name: credit-risk-api
+    ports:
+      - "8000:8000"        # Map host port 8000 to container port 8000
+    environment:
+      - MODEL_URI=mlruns/0/<your_run_id>/artifacts/model  # Optional: Model path as env var
+    restart: always

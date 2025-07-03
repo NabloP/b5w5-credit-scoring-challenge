@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/admin/Documents/GIT%20Repositories/b5w5-credit-scoring-challenge/mlruns/379996855192855743/c31c3b159eb34dcaad297333a7098395/artifacts
+end_time: 1751570798623
+entry_point_name: ''
+experiment_id: '379996855192855743'
+lifecycle_stage: active
+run_id: c31c3b159eb34dcaad297333a7098395
+run_name: respected-perch-306
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751570787553
+status: 3
+tags: []
+user_id: admin

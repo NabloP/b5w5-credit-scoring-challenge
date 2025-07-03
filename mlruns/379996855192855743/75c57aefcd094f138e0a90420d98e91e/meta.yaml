@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/admin/Documents/GIT%20Repositories/b5w5-credit-scoring-challenge/mlruns/379996855192855743/75c57aefcd094f138e0a90420d98e91e/artifacts
+end_time: 1751571954017
+entry_point_name: ''
+experiment_id: '379996855192855743'
+lifecycle_stage: active
+run_id: 75c57aefcd094f138e0a90420d98e91e
+run_name: skillful-duck-245
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751571944690
+status: 3
+tags: []
+user_id: admin

@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/admin/Documents/GIT%20Repositories/b5w5-credit-scoring-challenge/mlruns/379996855192855743/d92f26fae27245668c67cece461d7664/artifacts
+end_time: 1751571944666
+entry_point_name: ''
+experiment_id: '379996855192855743'
+lifecycle_stage: active
+run_id: d92f26fae27245668c67cece461d7664
+run_name: youthful-wolf-45
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751571923117
+status: 3
+tags: []
+user_id: admin

@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/admin/Documents/GIT%20Repositories/b5w5-credit-scoring-challenge/mlruns/379996855192855743/233e0be95b7b4080b116e6fdaf689f31/artifacts
+end_time: 1751570239686
+entry_point_name: ''
+experiment_id: '379996855192855743'
+lifecycle_stage: active
+run_id: 233e0be95b7b4080b116e6fdaf689f31
+run_name: fearless-foal-35
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751570220387
+status: 3
+tags: []
+user_id: admin
