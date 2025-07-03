@@ -1,26 +1,22 @@
 """
-customer_behavior_profiler.py – RFM Profiler for Customer Segmentation (B5W5)
+customer_behavior_profiler.py – Enhanced RFM Profiler with Shared Account Awareness (B5W5)
 ------------------------------------------------------------------------------
 Computes Recency, Frequency, and Monetary (RFM) metrics for each customer in
-the transaction dataset. These behavioral features form the basis for proxy
-risk label engineering and creditworthiness modeling.
+the transaction dataset, with optional segmentation by shared vs. individual accounts.
 
-Core responsibilities:
-  • Aggregate per-customer RFM statistics from raw transactions
-  • Compute Recency from a fixed snapshot date
-  • Handle missing values or duplicate customers defensively
-  • Strip timezone info to avoid tz-aware/naive datetime errors
-
-Used in Task 2 EDA and Task 4 proxy target engineering.
+Core Features:
+  • Aggregate RFM metrics per customer
+  • Optional segmentation by shared account flag
+  • Defensible input validation and error handling
 
 Author: Nabil Mohamed
 """
 
 # ───────────────────────────────────────────────────────────────────────────────
-# 📦 Third-Party Imports
+# 📦 Imports
 # ───────────────────────────────────────────────────────────────────────────────
-import pandas as pd  # For DataFrame operations
-import numpy as np  # For date math
+import pandas as pd  # For data manipulation
+import numpy as np  # For calculations
 
 
 # ───────────────────────────────────────────────────────────────────────────────
@@ -28,82 +24,95 @@ import numpy as np  # For date math
 # ───────────────────────────────────────────────────────────────────────────────
 class CustomerBehaviorProfiler:
     """
-    Computes RFM (Recency, Frequency, Monetary) statistics per customer
-    to support credit scoring via behavioral segmentation.
+    Computes RFM (Recency, Frequency, Monetary) metrics per customer,
+    optionally stratified by shared account usage.
     """
 
     def __init__(
-        self, df: pd.DataFrame, customer_id_col: str, date_col: str, value_col: str
+        self,
+        df: pd.DataFrame,
+        customer_id_col: str,
+        date_col: str,
+        value_col: str,
+        shared_col: str = None,
     ):
         """
-        Initialize with transaction data and key column names.
+        Initialize the profiler with the transaction dataset.
 
         Args:
-            df (pd.DataFrame): Raw transaction data
-            customer_id_col (str): Name of the customer ID column
-            date_col (str): Name of the transaction datetime column
-            value_col (str): Name of the monetary value column (e.g., 'Value')
+            df (pd.DataFrame): The input transaction data.
+            customer_id_col (str): Column name for customer ID.
+            date_col (str): Column name for transaction date.
+            value_col (str): Column name for transaction value.
+            shared_col (str, optional): Column name for shared account flag (0/1). Defaults to None.
 
         Raises:
-            ValueError: If required columns are missing or malformed
+            ValueError: If required columns are missing or date parsing fails.
         """
-        self.df = df.copy()  # 🔒 Defensive copy to avoid mutating input
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError("Input must be a pandas DataFrame.")
 
-        # 🛡️ Validate required columns
-        for col in [customer_id_col, date_col, value_col]:
-            if col not in self.df.columns:
-                raise ValueError(f"Column '{col}' not found in DataFrame.")
+        required_cols = [customer_id_col, date_col, value_col]
+        if shared_col:
+            required_cols.append(shared_col)
 
-        # 🕒 Attempt to parse date column, forcibly remove timezone info
+        missing_cols = [col for col in required_cols if col not in df.columns]
+        if missing_cols:
+            raise ValueError(f"Missing required columns: {missing_cols}")
+
         try:
-            self.df[date_col] = pd.to_datetime(self.df[date_col]).dt.tz_localize(None)
+            df[date_col] = pd.to_datetime(df[date_col]).dt.tz_localize(
+                None
+            )  # Ensure timezone neutrality
         except Exception as e:
-            raise ValueError(f"Failed to convert '{date_col}' to datetime: {e}")
+            raise ValueError(f"Failed to parse date column '{date_col}': {e}")
 
-        # ✅ Store configuration for downstream use
+        self.df = df.copy()
         self.customer_col = customer_id_col
         self.date_col = date_col
         self.value_col = value_col
+        self.shared_col = shared_col  # Optional shared flag
 
-    def compute_rfm(self, snapshot_date: str) -> pd.DataFrame:
+    def compute_rfm(self, snapshot_date: str, split_by_shared: bool = False) -> dict:
         """
-        Computes Recency, Frequency, and Monetary value per customer.
+        Computes Recency, Frequency, and Monetary metrics.
 
         Args:
-            snapshot_date (str): The reference date for recency calculation (YYYY-MM-DD)
+            snapshot_date (str): The reference date for recency.
+            split_by_shared (bool): If True, computes separate RFM for shared vs. individual accounts.
 
         Returns:
-            pd.DataFrame: RFM table with columns:
-                          ['CustomerId', 'Recency', 'Frequency', 'Monetary']
-
-        Raises:
-            ValueError: If snapshot_date cannot be parsed
+            dict: Dictionary of RFM DataFrames: {'Overall': df, 'Shared': df, 'Individual': df}
         """
-        # 🕒 Convert snapshot date, forcibly remove timezone info to avoid tz mismatch
         try:
             snapshot_dt = pd.to_datetime(snapshot_date).tz_localize(None)
         except Exception as e:
             raise ValueError(f"Invalid snapshot date '{snapshot_date}': {e}")
 
-        # 📦 Group data by customer
-        grouped = self.df.groupby(self.customer_col)
+        results = {}
 
-        # 🧮 Compute RFM values using aggregation
-        rfm = grouped.agg(
-            Recency=(
-                self.date_col,
-                lambda x: (snapshot_dt - x.max()).days,
-            ),  # days since last transaction
-            Frequency=(self.date_col, "count"),  # total transactions
-            Monetary=(self.value_col, "sum"),  # total monetary value
-        ).reset_index()
+        def compute_grouped_rfm(sub_df):
+            grouped = sub_df.groupby(self.customer_col)
+            rfm = (
+                grouped.agg(
+                    Recency=(self.date_col, lambda x: (snapshot_dt - x.max()).days),
+                    Frequency=(self.date_col, "count"),
+                    Monetary=(self.value_col, "sum"),
+                )
+                .reset_index()
+                .rename(columns={self.customer_col: "CustomerId"})
+            )
+            return rfm
 
-        # 🧾 Rename customer ID column for consistency (optional)
-        rfm.rename(columns={self.customer_col: "CustomerId"}, inplace=True)
+        # Overall RFM
+        results["Overall"] = compute_grouped_rfm(self.df)
 
-        # ✅ Log RFM table creation
-        print(
-            f"✅ RFM profile computed for {rfm.shape[0]:,} customers (Snapshot: {snapshot_date})"
-        )
+        # Shared vs. Individual split if requested and shared_col is provided
+        if split_by_shared and self.shared_col:
+            shared_df = self.df[self.df[self.shared_col] == 1]
+            individual_df = self.df[self.df[self.shared_col] == 0]
+            results["Shared"] = compute_grouped_rfm(shared_df)
+            results["Individual"] = compute_grouped_rfm(individual_df)
 
-        return rfm
+        print(f"✅ RFM computed: {list(results.keys())} (Snapshot: {snapshot_date})")
+        return results
